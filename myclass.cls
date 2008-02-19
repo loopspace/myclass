@@ -40,6 +40,19 @@
 \newif\ifmydef@ults
 
 %
+% Do we want graphics capabilities?
+%
+
+\newif\ifmyfig@res
+
+%
+% Load in the ifpdf.sty package to allow 'ifpdf'
+% TODO: Perhaps check for existence and otherwise add in manually?
+%
+
+\RequirePackage{ifpdf}
+
+%
 % Set the real class according to options
 %
 
@@ -74,6 +87,20 @@
     \my@orig@options
   }
   \drafttrue
+}
+
+\DeclareOption{fig}{
+  \myfig@restrue
+}
+
+\DeclareOption{figdraft}{
+  \myfig@restrue
+  \PassOptionsToPackage{draft}{graphicx}
+}
+
+\DeclareOption{fignodraft}{
+  \myfig@restrue
+  \PassOptionsToPackage{final}{graphicx}
 }
 
 \DeclareOption{defaults}{
@@ -112,4 +139,17 @@
   \fi
 
   \usepackage{hyphenat}
+\fi
+
+% Load graphics packages
+
+\ifmyfig@res
+  \ifpdf
+    \usepackage[pdftex]{graphicx}
+    \usepackage[pdftex,dvipsnames]{color}
+  \else
+    \usepackage[dvips]{graphicx}
+    \usepackage[dvips]{color}
+  \fi
+  \PassOptionsToPackage{fig}{mymacros}
 \fi
