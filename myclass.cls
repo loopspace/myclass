@@ -16,6 +16,12 @@
 \newif\ifAMS
 \newif\ifarxiv
 \newif\ifhopf
+\newif\ifbeamer
+
+% Some 'ifs' for beamer presentations
+
+\newif\ifbeamerdef
+\newif\ifbe@merarticle
 
 %
 % If we're in draft mode
@@ -74,6 +80,17 @@
   \pxfontsfalse
 }
 
+\DeclareOption{beamer}{
+  \def\my@real@class{beamer}
+  \beamertrue
+}
+
+\DeclareOption{beamerdefault}{
+  \def\my@real@class{beamer}
+  \beamertrue
+  \beamerdeftrue
+}
+
 \DeclareOption{nopxfonts}{
   \pxfontsfalse
 }
@@ -117,39 +134,87 @@
     }
 }
 \ProcessOptions
+
+% Copied from the TeX FAQ entry 'comparing the ``jobname'''.
+
+\def\be@mertypeis#1{FF\fi
+  \def\my@predicate{#1}%
+  \edef\my@predicate{\expandafter\strip@prefix\meaning\my@predicate}%
+  \edef\my@job{\be@mertype}%
+  \ifx\my@job\my@predicate
+  }
+
+\ifbeamer
+ \def\be@mertwo#1.#2{#2}
+ \def\be@merone#1.#2{#1}
+ \edef\be@mertype{\expandafter\be@mertwo\jobname}
+ \edef\be@merfile{\expandafter\be@merone\jobname}
+ \edef\be@merdefopts{12pt,t,xcolor=dvipsname,ignorenonframetext}
+
+ \if\be@mertypeis{article}
+  \def\my@real@class{article}
+  \be@merarticletrue
+  \def\be@merdefopts{a4paper,10pt}
+ \fi
+
+ \if\be@mertypeis{handout}
+  \PassOptionsToClass{handout}{beamer}
+  \def\be@merdefopts{12pt,xcolor=dvipsname,ignorenonframetext}
+ \fi
+
+ \if\be@mertypeis{trans}
+  \PassOptionsToClass{trans}{beamer}
+  \def\be@merdefopts{12pt,xcolor=dvipsname,ignorenonframetext}
+ \fi
+
+ \ifbeamerdef
+  \PassOptionsToClass{\be@merdefopts}{\my@real@class}
+ \fi
+\fi
+
 % Add any additional options to the class
 \my@real@options
+
 \LoadClass{\my@real@class}
+
+\ifbe@merarticle
+  \RequirePackage[envcountsect]{beamerarticle}
+  \setjobnamebeamerversion{\be@merfile.beamer}
+\fi
 
 % Load default packages
 
 \ifmydef@ults
-  \usepackage{amsmath}
+  \RequirePackage{amsmath}
 
   \ifLMS
   \else
-    \usepackage{amsthm}
+    \RequirePackage{amsthm}
   \fi
 
   \ifpxfonts
-    \usepackage{pxfonts}
+    \RequirePackage{pxfonts}
   \else
-    \usepackage{amssymb}
+    \RequirePackage{amssymb}
     \newcommand{\coloneqq}{\colon=}
   \fi
 
-  \usepackage{hyphenat}
+  \RequirePackage{hyphenat}
 \fi
 
 % Load graphics packages
 
 \ifmyfig@res
   \ifpdf
-    \usepackage[pdftex]{graphicx}
-    \usepackage[pdftex,dvipsnames]{color}
+    \PassOptionsToPackage{pdftex}{graphicx}
+    \PassOptionsToPackage{pdftex,dvipsnames}{color}
   \else
-    \usepackage[dvips]{graphicx}
-    \usepackage[dvips]{color}
+    \PassOptionsToPackage{dvips}{graphicx}
+    \PassOptionsToPackage{dvips,dvipsnames}{color}
   \fi
   \PassOptionsToPackage{fig}{mymacros}
+  \RequirePackage{graphicx}
+  \@ifpackageloaded{xcolor}{}{
+   \RequirePackage{color}
+  }
 \fi
