@@ -1,0 +1,15 @@
+2008-04-16  Andrew Edgell Stacey  <andrew.stacey@math.ntnu.no>
+
+	* myclass.cls: Rejigged the figure package loading so that color
+	is not loaded if xcolor is already loaded.  Avoids issues with
+	beamer.
+	
+2008-04-15  Andrew Edgell Stacey  <andrew.stacey@math.ntnu.no>
+
+	* myclass.cls: Added 'beamer' and 'beamerdefault' options to load
+	the beamer class; default option loads it with certain default
+	options (currently: 12pt, t, xcolor=dvipsnames, ignorenonframetext)
+	The type of article produced by beamer is controlled by the
+	filename (technically, the \jobname).  This should be of the form
+	name.type(.tex) with no '.'s in the name.
+

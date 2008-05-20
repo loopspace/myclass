@@ -218,3 +218,76 @@
    \RequirePackage{color}
   }
 \fi
+
+%
+% Journal handling.  All journals want the same basic information but
+% all want it in a different way.  This makes the whole thing a little
+% messy.
+%
+
+\newcommand{\mytitle}[1]{\gdef\my@title{#1}}
+\newcommand{\myshorttitle}[1]{\gdef\my@short@title{#1}}
+\newcommand{\mydate}[1]{\gdef\my@date{#1}}
+\newcommand{\myabstract}[1]{\gdef\my@abstract{#1}}
+\newcommand{\mysubjclass}[2][]{\gdef\my@mscyear{#1}\gdef\my@subjclass{#2}}
+\newcommand{\mykeywords}[1]{\gdef\my@keywords{#1}}
+\newcommand{\mydedicatory}[1]{\gdef\my@dedicatory{#1}}
+
+%
+% This gets looped over for each author.  Tricky.
+%
+
+\newcommand{\myauthor}[1]{%
+  \ifx\@empty\my@author
+  \gdef\my@author{#1}%
+  \else
+  \g@addto@macro\my@author{\and#1}%
+  \fi
+}
+\newcommand{\myshortauthor}[1]{}
+\newcommand{\myaddress}[1]{}
+\newcommand{\mycurraddr}[1]{}
+\newcommand{\myemail}[1]{}
+\newcommand{\mythanks}[1]{%
+  \g@addto@macro\my@author{\thanks{#1}}}
+
+\def\my@title{\@latex@error{No \noexpand\title given}\@ehc}
+\def\my@shorttitle{\@latex@error{No \noexpand\shorttitle given}\@ehc}
+\let\my@author\@empty
+\def\my@abstract{\@latex@warning@no@line{No \noexpand\abstract given}}
+\gdef\my@date{\today}
+
+\newcommand{\std@maketitle}{%
+  \maketitle
+
+  \begin{abstract}
+  \my@abstract
+  \end{abstract}
+}
+
+\newcommand{\ams@maketitle}{%
+  \begin{abstract}
+  \my@abstract
+  \end{abstract}
+
+  \maketitle
+}
+
+% Standard LaTeX version
+
+
+\ifAMS
+\AtBeginDocument{%
+  \title{\my@title}
+  \author{\my@author}
+  \date{\my@date}
+}
+\let\mymaketitle\ams@maketitle
+\else
+\AtBeginDocument{%
+  \title{\my@title}
+  \author{\my@author}
+  \date{\my@date}
+}
+\let\mymaketitle\std@maketitle
+\fi
