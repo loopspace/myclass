@@ -1,22 +1,82 @@
 \documentclass[%
 %article,%
 %lms,%
-amsart,%
+%hopf,%
+%pxfonts,%
+%docmath,%
+%amsart,%
 %arxiv,%
-%defaults,%
+defaults,%
 ]{myclass}
 
-\mytitle{Test of the myclass.cls Class}
 
-\myauthor{Andrew Stacey}
-\myauthor{Someone Else}
-
+\mytitle{Test of the \texttt{myclass.cls} Class}
+\myshorttitle{MyClass.cls}
+\mydate{\today}
 \myabstract{%
 This document tests various features of the \texttt{myclass.cls} class file.}
+\mysubjclass[2000]{56A56}
+\mykeywords{Journal-independent class file}
+\mydedicatory{Dedicated to all those journal class file writers}
+
+\myauthor{Andrew Stacey}
+\myshortauthor{Andy}
+\myaddress{Right here}
+\myemail{as.if.I.would@tell.you}
+\myurl{http://www.as.if.i.would/tell.you}
+\mycurraddr{Still here}
+\mythanks{Thanks}
+
+\myauthor{Someone Else}
+\myshortauthor{Nobody}
+\myaddress{Somewhere else}
+\myemail{doesn.t.work@somewhere.else}
+\myurl{http://www.can.t.get.a.url/}
+\mycurraddr{Still lost}
+\mythanks{No Thanks}
+
+\myauthor{Some Other Person}
+\myshortauthor{Mr No-One}
+\myaddress{Some Other Place}
+\myemail{doesn.t.work@somewhere.else}
+\myurl{http://www.can.t.get.a.url/}
+\mycurraddr{Still very lost}
+\mythanks{No Thanks}
+
+\myauthor{Someone Else Entirely}
+\myshortauthor{Nobody}
+\myaddress{Somewhere Entirely}
+\myemail{doesn.t.work@somewhere.else}
+\myurl{http://www.can.t.get.a.url/}
+\mycurraddr{Still a little bit lost}
+\mythanks{No Thanks}
+
+\myauthor{No-one Else}
+%\myshortauthor{Nobody}
+\myaddress{Nowhere else}
+\myemail{doesn.t.work@somewhere.else}
+\myurl{http://www.can.t.get.a.url/}
+\mycurraddr{North Pole}
+\mythanks{No Thanks}
 
 \begin{document}
 
 \mymaketitle
 
+\newpage
+
+\ifClassIs{article}
+Hello Article
+\else
+Goodbye Article
+\fi
+
+\newpage
+
+\ifClassIs{amsart}
+Hello Amsart
+\else
+Goodbye Amsart
+\fi
 
 \end{document}
