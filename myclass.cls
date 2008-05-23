@@ -1,11 +1,15 @@
 \ProvidesClass{myclass}
 
 %
-% Holds the ``real'' class
+% Holds the ``real'' class, the options to be passed to it, and the
+% default options to be passed.  The last is so that options to this
+% class can specify options to be passed to the real class if the
+% 'default' option is selected.
 %
 
 \def\my@real@class{article}
 \let\my@real@options\@empty
+\let\my@def@options\@empty
 
 % Holds the desired bibliography style
 \def\my@bib@style{alpha}
@@ -31,9 +35,13 @@
 % Might be better to implement this as a three-option command since
 % otherwise it doesn't seem to be good at nesting.
 
-\newcommand{\ifClassIs}[1]{%
+\def\ifClassIs#1{%
   \edef\my@test{#1}%
-  \ifx\my@test\my@real@class}
+  \ifx\my@test\my@real@class
+   \expandafter\@firstoftwo
+  \else
+   \expandafter\@secondoftwo
+  \fi}
 
 %
 % Some options will want particular style files loaded after the main
@@ -179,7 +187,13 @@
 \newcommand{\mysubjclass}{\@ifundefined{subjclass}{\@gobbletwoopt}{\subjclass}}
 \newcommand{\mykeywords}{\@ifundefined{keywords}{\@gobble}{\keywords}}
 \newcommand{\mydedicatory}{\@ifundefined{dedicatory}{\@gobble}{\dedicatory}}
-\newcommand{\mymaketitle}{\maketitle \abstract\my@abstract\endabstract}
+\newcommand{\mymaketitle}{%
+  \maketitle
+
+  \begin{abstract}
+  \my@abstract
+  \end{abstract}
+}
 
 \newcommand{\mybibliographystyle}{\bibliographystyle{\my@bib@style}}
 
@@ -390,7 +404,12 @@
 
 \DeclareOption{amsart}{
   \def\my@real@class{amsart}
-  \renewcommand{\mymaketitle}{\abstract\my@abstract\endabstract \maketitle}
+  \renewcommand{\mymaketitle}{%
+    \begin{abstract}
+    \my@abstract
+    \end{abstract}
+
+    \maketitle}
 %
 % The amsart.cls defines their _internal_ shorttitle macro as
 % '\shorttitle' which is bad style (should have an @ symbol as it is
@@ -566,24 +585,33 @@
 % Copied from the TeX FAQ entry 'comparing the ``jobname'''.
 
   \def\be@mertypeis#1{FF\fi
-   \def\my@predicate{#1}%
+   \edef\my@predicate{#1}%
    \edef\my@predicate{\expandafter\strip@prefix\meaning\my@predicate}%
    \edef\my@job{\be@mertype}%
-   \ifx\my@job\my@predicate
+   \ifx\be@mertype\my@predicate
   }
 
   \def\be@mertwo#1.#2{#2}
   \def\be@merone#1.#2{#1}
-  \edef\be@mertype{\expandafter\be@mertwo\jobname}
-  \edef\be@merfile{\expandafter\be@merone\jobname}
+
+  \edef\be@mertest{\expandafter\be@merone\jobname.j}
+  \edef\my@jobname{\jobname}
+  \ifx\be@mertest\my@jobname
+   \def\be@mertype{beamer}
+   \def\be@merfile{\jobname}
+  \else
+   \edef\be@mertype{\expandafter\be@mertwo\jobname}
+   \edef\be@merfile{\expandafter\be@merone\jobname}
+  \fi
+
   \edef\be@merdefopts{12pt,t,xcolor=dvipsname,ignorenonframetext}
 
   \if\be@mertypeis{article}
    \def\my@real@class{article}
-   \be@merarticletrue
+   \my@request@package{beamerarticle}
+   \PassOptionsToPackage{envcountsect}{beamerarticle}
    \def\be@merdefopts{a4paper,10pt}
    \g@addto@macro{\my@afterclass}{%
-    \RequirePackage[envcountsect]{beamerarticle}
     \setjobnamebeamerversion{\be@merfile.beamer}
    }
   \fi
@@ -598,16 +626,7 @@
    \def\be@merdefopts{12pt,xcolor=dvipsname,ignorenonframetext}
   \fi
 
-  \ifbeamerdef
-   \PassOptionsToClass{\be@merdefopts}{\my@real@class}
-  \fi
- \fi
-}
-
-\DeclareOption{beamerdefault}{
-  \def\my@real@class{beamer}
-  \beamertrue
-  \beamerdeftrue
+  \expandafter\g@addto@macro\expandafter{\expandafter\my@def@options\expandafter}\expandafter{\expandafter\PassOptionsToClass\expandafter{\expandafter\be@merdefopts\expandafter}\expandafter{\my@real@class}}
 }
 
 \DeclareOption{nopxfonts}{
@@ -621,25 +640,34 @@
 \DeclareOption{draft}{
   % Need to make sure that this isn't done until we're sure of what
   % \my@real@class is
-  \let\my@orig@options\my@real@options
-  \edef\my@real@options{
-    \noexpand\PassOptionsToClass{draft}{\noexpand\my@real@class}
-    \my@orig@options
-  }
+  \g@addto@macro{\my@real@options}{\PassOptionsToClass{draft}{\noexpand\my@real@class}}
   \drafttrue
 }
 
 \DeclareOption{fig}{
-  \myfig@restrue
+  \my@request@package{graphicx}
+  \ifpdf
+    \PassOptionsToPackage{pdftex}{graphicx}
+    \PassOptionsToPackage{pdftex,dvipsnames}{color}
+  \else
+    \PassOptionsToPackage{dvips}{graphicx}
+    \PassOptionsToPackage{dvips,dvipsnames}{color}
+  \fi
+  \PassOptionsToPackage{fig}{mymacros}
+
+  \g@addto@macro{\my@afterclass}{
+  \@ifpackageloaded{xcolor}{}{
+   \RequirePackage{color}
+  }}
 }
 
 \DeclareOption{figdraft}{
-  \myfig@restrue
+  \ExecuteOptions{fig}
   \PassOptionsToPackage{draft}{graphicx}
 }
 
 \DeclareOption{fignodraft}{
-  \myfig@restrue
+  \ExecuteOptions{fig}
   \PassOptionsToPackage{final}{graphicx}
 }
 
@@ -654,16 +682,13 @@
     \RequirePackage{amssymb}
     \providecommand{\coloneqq}{\colon=}
   }}
+  \g@addto@macro{\my@real@options}{\my@def@options}
 }
 
 \DeclareOption*{
   % Need to make sure that this isn't done until we're sure of what
   % \my@real@class is
-  \let\my@orig@options\my@real@options
-  \edef\my@real@options{
-    \noexpand\PassOptionsToClass{\CurrentOption}{\noexpand\my@real@class}
-    \my@orig@options
-    }
+  \expandafter\g@addto@macro\expandafter{\expandafter\my@real@options\expandafter}\expandafter{\expandafter\PassOptionsToClass\expandafter{\CurrentOption}{\my@real@class}}
 }
 \ProcessOptions
 
@@ -677,22 +702,3 @@
 % Some options will have set things that need to be done after the
 % class is loaded.
 \my@afterclass
-
-% Load default packages
-
-% Load graphics packages
-
-\ifmyfig@res
-  \ifpdf
-    \PassOptionsToPackage{pdftex}{graphicx}
-    \PassOptionsToPackage{pdftex,dvipsnames}{color}
-  \else
-    \PassOptionsToPackage{dvips}{graphicx}
-    \PassOptionsToPackage{dvips,dvipsnames}{color}
-  \fi
-  \PassOptionsToPackage{fig}{mymacros}
-  \RequirePackage{graphicx}
-  \@ifpackageloaded{xcolor}{}{
-   \RequirePackage{color}
-  }
-\fi
