@@ -34,6 +34,9 @@
 %
 % Might be better to implement this as a three-option command since
 % otherwise it doesn't seem to be good at nesting.
+%
+% Done.
+
 
 \def\ifClassIs#1{%
   \edef\my@test{#1}%
@@ -190,9 +193,12 @@
 \newcommand{\mymaketitle}{%
   \maketitle
 
+  \ifx\my@abstract\@empty
+  \else
   \begin{abstract}
   \my@abstract
   \end{abstract}
+  \fi
 }
 
 \newcommand{\mybibliographystyle}{\bibliographystyle{\my@bib@style}}
@@ -233,6 +239,7 @@
 \let\my@shortauthors\@empty
 \let\my@thanks\@empty
 \let\my@shorttitle\@empty
+\let\my@abstract\@empty
 
 \newcommand{\my@process@author}{%
   \ifx\my@this@author\@empty
@@ -405,9 +412,12 @@
 \DeclareOption{amsart}{
   \def\my@real@class{amsart}
   \renewcommand{\mymaketitle}{%
+    \ifx\my@abstract\@empty
+    \else
     \begin{abstract}
     \my@abstract
     \end{abstract}
+    \fi
 
     \maketitle}
 %
@@ -571,8 +581,15 @@
   \let\mymaketitle\my@docmath@maketitle
 }
 
+% Just warn about the bibliography for now.
 
 \DeclareOption{arxiv}{
+  \g@addto@macro{\mybibliography}{\medskip {\large Warning: the arXiv does not like unprocessed BibTeX references}}
+}
+
+% This doesn't do anything as yet - it's more as a default.
+
+\DeclareOption{article}{
 }
 
 \DeclareOption{hopf}{
@@ -640,7 +657,7 @@
 \DeclareOption{draft}{
   % Need to make sure that this isn't done until we're sure of what
   % \my@real@class is
-  \g@addto@macro{\my@real@options}{\PassOptionsToClass{draft}{\noexpand\my@real@class}}
+  \g@addto@macro{\my@real@options}{\PassOptionsToClass{draft}{\my@real@class}}
   \drafttrue
 }
 
@@ -688,7 +705,8 @@
 \DeclareOption*{
   % Need to make sure that this isn't done until we're sure of what
   % \my@real@class is
-  \expandafter\g@addto@macro\expandafter{\expandafter\my@real@options\expandafter}\expandafter{\expandafter\PassOptionsToClass\expandafter{\CurrentOption}{\my@real@class}}
+  \edef\my@temp{\noexpand\PassOptionsToClass{\CurrentOption}{\noexpand\my@real@class}}
+  \ge@addto@macro{\my@real@options}{\my@temp}
 }
 \ProcessOptions
 
