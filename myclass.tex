@@ -3,7 +3,7 @@
 %lms,%
 %hopf,%
 %pxfonts,%
-%docmath,%
+docmath,%
 %amsart,%
 %arxiv,%
 defaults,%
@@ -65,18 +65,18 @@ This document tests various features of the \texttt{myclass.cls} class file.}
 
 \newpage
 
-\ifClassIs{article}
+\ifClassIs{article}{
 Hello Article
-\else
+}{
 Goodbye Article
-\fi
+}
 
 \newpage
 
-\ifClassIs{amsart}
+\ifClassIs{amsart}{
 Hello Amsart
-\else
+}{
 Goodbye Amsart
-\fi
+}
 
 \end{document}

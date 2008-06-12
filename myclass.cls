@@ -473,22 +473,17 @@
 %
 
 {\obeylines\gdef\my@docmath@maketitle{%
-\Title
-\my@title
-\ShortTitle
-\my@shorttitle
+\Title \my@title
+\ShortTitle \my@shorttitle
 \SubTitle   
-\Author
-\my@authors
+\Author \my@authors
 \ShortAuthor \my@shortauthors
 \EndTitle
 \Abstract \my@abstract
 \EndAbstract
-\MSC
-\my@subjclass
+\MSC \my@subjclass
 \EndMSC
-\KEY
-\my@keywords
+\KEY \my@keywords
 \EndKEY
 \Address \my@first@address
 \Address \my@second@address
