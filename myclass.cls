@@ -582,6 +582,15 @@
   \g@addto@macro{\mybibliography}{\medskip {\large Warning: the arXiv does not like unprocessed BibTeX references}}
 }
 
+% Commentarii Mathematici Helvetici; wants article.cls with prescribed
+% text width and height
+
+\DeclareOption{cmh}{
+  \g@addto@macro{\my@afterclass}{
+  \setlength{\textwidth}{125mm}
+  \setlength{\textheight}{185mm}}
+}
+
 % This doesn't do anything as yet - it's more as a default.
 
 \DeclareOption{article}{
