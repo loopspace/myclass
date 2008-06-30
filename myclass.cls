@@ -583,12 +583,67 @@
 }
 
 % Commentarii Mathematici Helvetici; wants article.cls with prescribed
-% text width and height
+% text width and height and address etc on title page.
 
 \DeclareOption{cmh}{
+
   \g@addto@macro{\my@afterclass}{
   \setlength{\textwidth}{125mm}
-  \setlength{\textheight}{185mm}}
+  \setlength{\textheight}{185mm}
+
+  \def\@maketitle{%
+  \newpage
+  \null
+  \vskip 2em%
+  \begin{center}%
+  \let \footnote \thanks
+    {\LARGE \@title \par}%
+    \vskip 1.5em%
+    {\small
+      \lineskip .5em%
+      \begin{tabular}[t]{c}%
+        \@author
+      \end{tabular}\par}%
+    \vskip 1em%
+    {\large \@date}%
+  \end{center}%
+  \par
+  \vskip 1.5em}}
+
+  \renewcommand{\my@process@author}{%
+  \ifx\my@this@author\@empty
+  \else
+
+   \ifx\my@authors\@empty
+   \else
+    \ge@addto@macro{\my@authors}{\myand}
+   \fi
+   \g@addto@macro{\my@authors}{\large}
+   \ge@addto@macro{\my@authors}{\my@this@author}
+   \ifx\my@this@thanks\@empty
+   \else
+    \expandafter\g@addto@macro\expandafter{\expandafter\my@authors\expandafter}\expandafter{\expandafter\thanks\expandafter{\my@this@thanks}}
+   \fi
+   \ifx\my@this@addres\@empty
+   \else
+    \g@addto@macro{\my@authors}{\\}
+    \expandafter\g@addto@macro\expandafter{\expandafter\my@authors\expandafter}\expandafter{\my@this@address}
+   \fi
+   \ifx\my@this@email\@empty
+   \else
+    \expandafter\g@addto@macro\expandafter{\expandafter\my@authors\expandafter}\expandafter{\expandafter\\\expandafter\texttt\expandafter{\my@this@email}}
+   \fi
+
+
+   \let\my@this@author\@empty
+   \let\my@this@shortauthor\@empty
+   \let\my@this@address\@empty
+   \let\my@this@email\@empty
+   \let\my@this@url\@empty
+   \let\my@this@curraddr\@empty
+   \let\my@this@thanks\@empty
+  \fi
+}
 }
 
 % This doesn't do anything as yet - it's more as a default.
