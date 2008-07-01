@@ -586,6 +586,7 @@
 % text width and height and address etc on title page.
 
 \DeclareOption{cmh}{
+  \def\my@bib@style{halpha}
 
   \g@addto@macro{\my@afterclass}{
   \setlength{\textwidth}{125mm}
