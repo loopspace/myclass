@@ -411,6 +411,18 @@
 
 \DeclareOption{amsart}{
   \def\my@real@class{amsart}
+
+%
+% amsart (and derivatives) redefine bibliographystyle removing the
+% check for AtBeginDocument.  So we have to put it back in.
+%
+
+  \renewcommand{\mybibliographystyle}{%
+    \ifx\@begindocumenthook\@undefined\else
+    \expandafter\AtBeginDocument
+  \fi
+    {\bibliographystyle{\my@bib@style}}}
+
   \renewcommand{\mymaketitle}{%
     \ifx\my@abstract\@empty
     \else
@@ -454,6 +466,12 @@
   \renewcommand{\mycurraddr}{\curraddr}
   \renewcommand{\mythanks}{\thanks}
   \let\my@process@lastauthor\my@process@author
+}
+
+\DeclareOption{amsproc}{
+  \ExecuteOptions{amsart}
+  \def\my@real@class{proc-l}
+  \def\my@bib@style{amsalpha}
 }
 
 %
