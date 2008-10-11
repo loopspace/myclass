@@ -16,6 +16,7 @@
 
 % Any post-loading stuff to be done is held in here.
 \let\my@afterclass\@empty
+\let\my@afterpackages\@empty
 
 %
 % Expanded version of \g@addto@macro.  Adds the _expansion_ of the
@@ -202,6 +203,7 @@
 }
 
 \newcommand{\mybibliographystyle}{\bibliographystyle{\my@bib@style}}
+\newcommand{\mybibliography}{\bibliography}
 
 %
 % Author treatment is a pain.  Some class files ask for the authors to
@@ -268,9 +270,27 @@
 \newcommand{\my@process@lastauthor}{%
   \let\myand\mylastand
   \my@process@author
-    \expandafter\author\expandafter{\my@authors}}
+  \ifx\my@authors\@empty
+  \else
+    \expandafter\author\expandafter{\my@authors}%
+\fi}
 
 \AtBeginDocument{\my@process@lastauthor}
+
+
+\DeclareOption{NTNUoving}{
+
+  \def\my@real@class{NTNUoving}
+  \PassOptionsToClass{11pt, a4paper}{article}
+  
+%  \my@request@package{inputenc}
+%  \my@request@package{fontenc}
+
+%  \PassOptionsToPackage{utf8}{inputenc}
+%  \PassOptionsToPackage{T1}{fontenc}
+  \PassOptionsToPackage{english}{babel}
+}
+
 
 \DeclareOption{lms}{
   \def\my@real@class{lms}
@@ -408,6 +428,132 @@
 %
   \AtEndDocument{\my@endmatter}
 }
+
+
+\DeclareOption{compositio}{
+  \def\my@real@class{compositio}
+  \def\my@bib@style{amsalpha}
+  \def\my@thmstyle@thm{plain}
+  \def\my@thmstyle@def{definition}
+  \def\my@thmstyle@rmk{remark}
+
+
+  \renewcommand{\mydedicatory}{\dedication}
+  \renewcommand{\mysubjclass}[2][]{\classification{#2}}
+
+  \let\my@use@shortauthors\@empty
+
+  \let\my@endmatter\@empty
+  \def\myand{, }
+  \def\mylastand{, \and}
+
+  \renewcommand{\mymaketitle}{%
+    \ifx\my@abstract\@empty
+    \else
+    \begin{abstract}
+    \my@abstract
+    \end{abstract}
+    \fi
+
+    \maketitle}
+
+%
+% compositio is pretty much like amsart except that it wants the
+% per-author matter to be in a specific order.
+% We can't guarantee that the right order will be used in the
+% document, so we kludge it.
+%
+
+  \renewcommand{\my@process@author}{%
+%%
+%% Don't do anything unless we have an author.
+%%
+%
+    \ifx\my@this@author\@empty
+    \else
+%
+     \expandafter\author\expandafter{\my@this@author}
+
+% Only specify an email if it's been given
+
+     \ifx\my@this@email\@empty
+     \else
+      \expandafter\email\expandafter{\my@this@email}
+     \fi
+
+% However, if the address is empty assume that the previous one is to
+% be used
+
+    \expandafter\address\expandafter{\my@this@address}
+
+% Current address is handled the same way as email
+
+    \ifx\my@this@curraddr\@empty
+    \else
+     \expandafter\curraddr\expandafter{\my@this@curraddr}
+    \fi
+
+% Short authors is a little awkward.  Compositio provides a single
+% 'shortauthors' command for the running head.  We only want to use
+% this if a 'short author' has been explicitly specified.  However, if
+% it has then we want to have an entry for each author, whether or not
+% they specify a 'short author' variant.
+
+    \ifx\my@shortauthors\@empty
+    \else
+      \ge@addto@macro{\my@shortauthors}{\myand}
+     \fi
+     \ifx\my@this@shortauthor\@empty
+      \ge@addto@macro{\my@shortauthors}{\my@this@author}
+     \else
+      \ge@addto@macro{\my@shortauthors}{\my@this@shortauthor}
+     \fi
+
+    \ifx\my@this@shortauthor\@empty
+    \else
+     \def\my@use@shortauthors{t}
+    \fi
+
+% Thanks are handled altogether also
+
+     \ifx\my@this@thanks\@empty
+     \else
+      \ifx\my@thanks\@empty
+      \else
+       \g@addto@macro{\my@thanks}{.  }
+      \fi
+      \ge@addto@macro{\my@thanks}{\my@this@thanks}
+     \fi
+
+    \let\my@this@author\@empty
+    \let\my@this@shortauthor\@empty
+    \let\my@this@address\@empty
+    \let\my@this@email\@empty
+    \let\my@this@url\@empty
+    \let\my@this@curraddr\@empty
+    \let\my@this@thanks\@empty
+    \let\my@this@affiliation\@empty
+   \fi
+
+  }
+
+  \renewcommand{\my@process@lastauthor}{%
+    \let\myand\mylastand
+    \my@process@author
+%
+    \ifx\my@use@shortauthors\@empty
+    \else
+     \expandafter\shortauthor\expandafter{\my@shortauthors}
+    \fi
+    \ifx\my@thanks\@empty
+    \else
+     \expandafter\thanks\expandafter{\my@thanks}
+    \fi
+  }
+%
+  \AtEndDocument{\my@endmatter}
+}
+
 
 \DeclareOption{amsart}{
   \def\my@real@class{amsart}
@@ -594,10 +740,18 @@
   \let\mymaketitle\my@docmath@maketitle
 }
 
-% Just warn about the bibliography for now.
+% Just deal with the bibliography for now.
 
 \DeclareOption{arxiv}{
-  \g@addto@macro{\mybibliography}{\medskip {\large Warning: the arXiv does not like unprocessed BibTeX references}}
+  \renewcommand{\mybibliographystyle}[1]{}
+  \renewcommand{\mybibliography}[1]{\input{\jobname.bbl}}
+}
+
+% To get the .bbl file to have the right info, we need to ensure that
+% we have a suitable bibtex style
+
+\DeclareOption{prearxiv}{
+  \def\my@bib@style{halpha}
 }
 
 % Commentarii Mathematici Helvetici; wants article.cls with prescribed
@@ -663,6 +817,52 @@
    \let\my@this@thanks\@empty
   \fi
 }
+}
+
+\DeclareOption{jdg}{
+  \def\my@real@class{jdg-p}
+  \PassOptionsToClass{11pt}{jpg-p}
+  \def\my@bib@style{alpha} % Just in case we later change the default.
+
+  % According to their website they don't like footnotes.  Bizarrely,
+  % the class file defines the footnote command (not sure what the
+  % difference is between their definition and the standard one).
+
+  \AtBeginDocument{
+    \renewcommand{\footnote}[2][]{ (#2)}
+    }
+
+% jdg seems to follow amsart fairly consistently: it requires the
+% abstract to appear before the maketitle and mucks up the
+% bibliography command removing the check to see if the aux file has
+% been opened
+
+  \renewcommand{\mybibliographystyle}{%
+    \ifx\@begindocumenthook\@undefined\else
+    \expandafter\AtBeginDocument
+  \fi
+    {\bibliographystyle{\my@bib@style}}}
+
+  \renewcommand{\mymaketitle}{%
+    \ifx\my@abstract\@empty
+    \else
+    \begin{abstract}
+    \my@abstract
+    \end{abstract}
+    \fi
+
+    \maketitle}
+
+  % Also according to their website, they like a page size of 4.7in by
+  % 7.5in.  Their class file defines textheight as 8.5in.  To comply
+  % with the website directions, we need to override the textheight
+  % after it has been set by the class.  Fortunately, we know how to
+  % do these things.
+
+  \g@addto@macro{\my@afterclass}{
+    \setlength{\textheight}{7.5in}
+  }
+
 }
 
 % This doesn't do anything as yet - it's more as a default.
@@ -750,7 +950,7 @@
   \fi
   \PassOptionsToPackage{fig}{mymacros}
 
-  \g@addto@macro{\my@afterclass}{
+  \g@addto@macro{\my@afterpackages}{
   \@ifpackageloaded{xcolor}{}{
    \RequirePackage{color}
   }}
@@ -772,7 +972,7 @@
   \my@request@package{pxfonts}
   \my@request@package{hyphenat}
 
-  \g@addto@macro{\my@afterclass}{%
+  \g@addto@macro{\my@afterpackages}{%
   \@ifpackageloaded{pxfonts}{}{
     \RequirePackage{amssymb}
     \providecommand{\coloneqq}{\colon=}
@@ -793,8 +993,12 @@
 
 \LoadClass{\my@real@class}
 
-\my@load@packages
-
 % Some options will have set things that need to be done after the
 % class is loaded.
 \my@afterclass
+
+\my@load@packages
+
+% Some options will have set things that need to be done after the
+% packages have been loaded.
+\my@afterpackages

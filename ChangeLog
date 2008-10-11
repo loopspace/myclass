@@ -1,8 +1,11 @@
+2008-08-28  Andrew Edgell Stacey  <andrew.stacey@math.ntnu.no>
+
+	* myclass.cls: Added compositio option.  Easiest so far!
+
 2008-06-02  Andrew Edgell Stacey  <andrew.stacey@math.ntnu.no>
 
 	* myclass.cls: Modified abstract handling to cope with absent
 	abstract.
-	
 
 2008-05-23  Andrew Edgell Stacey  <andrew.stacey@math.ntnu.no>
 
