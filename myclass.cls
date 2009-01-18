@@ -186,6 +186,7 @@
 
 \newcommand{\mytitle}{\title}
 \newcommand{\myshorttitle}{\@ifundefined{shorttitle}{\@gobble}{\shorttitle}}
+\newcommand{\mysubtitle}{\@ifundefined{subtitle}{\@gobble}{\subtitle}}
 \newcommand{\mydate}{\date}
 \newcommand{\myabstract}[1]{\gdef\my@abstract{#1}}
 \newcommand{\mysubjclass}{\@ifundefined{subjclass}{\@gobbletwoopt}{\subjclass}}
@@ -241,6 +242,7 @@
 \let\my@shortauthors\@empty
 \let\my@thanks\@empty
 \let\my@shorttitle\@empty
+\let\my@subtitle\@empty
 \let\my@abstract\@empty
 
 \newcommand{\my@process@author}{%
@@ -639,7 +641,7 @@
 {\obeylines\gdef\my@docmath@maketitle{%
 \Title \my@title
 \ShortTitle \my@shorttitle
-\SubTitle   
+\SubTitle \my@subtitle
 \Author \my@authors
 \ShortAuthor \my@shortauthors
 \EndTitle
@@ -675,6 +677,7 @@
      \gdef\my@shorttitle{#1}
     \fi}
   \renewcommand{\myshorttitle}[1]{\gdef\my@shorttitle{#1}}
+  \renewcommand{\mysubtitle}[1]{\gdef\my@subtitle{#1}}
   \renewcommand{\myabstract}[1]{\gdef\my@abstract{#1}}
   \renewcommand{\mysubjclass}[2][]{\gdef\my@subjclass{#2}}
   \renewcommand{\mykeywords}[1]{\gdef\my@keywords{#1}}
@@ -886,27 +889,86 @@
    \ifx\be@mertype\my@predicate
   }
 
-  \def\be@mertwo#1.#2{#2}
-  \def\be@merone#1.#2{#1}
+  \def\be@mertwo#1.#2\relax{#2}
+  \def\be@merone#1.#2\relax{#1}
 
-  \edef\be@mertest{\expandafter\be@merone\jobname.j}
+% Find out how many components jobname has.  Format is
+% name[.type[.date]] where name has not dots, type is the type of
+% output (default ``beamer'') and date is the date of the lecture to
+% be produced, in ISO format of YYYYMMDD.
+
+  \let\be@merdate\@empty
+
+  \edef\be@mertest{\expandafter\be@merone\jobname.j\relax}
   \edef\my@jobname{\jobname}
+
   \ifx\be@mertest\my@jobname
+
+% Only one component
+
    \def\be@mertype{beamer}
    \def\be@merfile{\jobname}
   \else
-   \edef\be@mertype{\expandafter\be@mertwo\jobname}
-   \edef\be@merfile{\expandafter\be@merone\jobname}
+   \edef\be@mertest{\expandafter\be@merone\jobname\relax.\expandafter\expandafter\expandafter\be@merone\expandafter\be@mertwo\jobname.j\relax\relax}
+
+   \ifx\be@mertest\my@jobname
+
+% Only two components
+
+    \edef\be@mertype{\expandafter\be@mertwo\jobname\relax}
+    \edef\be@merfile{\expandafter\be@merone\jobname\relax}
+   \else
+
+% Three components
+
+    \edef\be@merdate{\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\expandafter\be@merone\expandafter\expandafter\expandafter\be@mertwo\expandafter\be@mertwo\jobname\relax\relax.j\relax}
+    \edef\be@mertype{\expandafter\expandafter\expandafter\be@merone\expandafter\be@mertwo\jobname\relax\relax}
+    \edef\be@merfile{\expandafter\be@merone\jobname\relax}
+
+  \g@addto@macro{\my@afterpackages}{%
+    \expandafter\includeonlylecture\expandafter{\be@merdate}
+
+  }
+
+   \fi
   \fi
 
   \edef\be@merdefopts{12pt,t,xcolor=dvipsname,ignorenonframetext}
+
+% There's a certain incompatibility between ignorenonframetext and
+% having a separate \mymaketitle macro.  The '\mymaketitle' doesn't
+% get seen by all modes so needs to be surrounded by
+% \mode<all>{\mymaketitle}.  Unfortunately, this has to be actually
+% typed in.  There doesn't seem to be any way to get a single command
+% to do a \mode and insert some text - the text always gets lost.
+
+  \renewcommand{\mymaketitle}{%
+    \mode<presentation>
+    {
+      \begin{frame}
+      \titlepage
+      \end{frame}
+    }
+
+    \mode<article>
+    {
+    \maketitle
+
+    \ifx\my@abstract\@empty
+    \else
+    \begin{abstract}
+    \my@abstract
+    \end{abstract}
+    \fi
+    }
+  }
 
   \if\be@mertypeis{article}
    \def\my@real@class{article}
    \my@request@package{beamerarticle}
    \PassOptionsToPackage{envcountsect}{beamerarticle}
    \def\be@merdefopts{a4paper,10pt}
-   \g@addto@macro{\my@afterclass}{%
+   \g@addto@macro{\my@afterpackages}{%
     \setjobnamebeamerversion{\be@merfile.beamer}
    }
   \fi
@@ -922,6 +984,20 @@
   \fi
 
   \expandafter\g@addto@macro\expandafter{\expandafter\my@def@options\expandafter}\expandafter{\expandafter\PassOptionsToClass\expandafter{\expandafter\be@merdefopts\expandafter}\expandafter{\my@real@class}}
+
+  \renewcommand{\myauthor}[2][]{%
+    \my@process@author%
+    \edef\my@temp{#1}%
+    \ifx\my@temp\@empty
+    \else
+     \ifx\my@this@shortauthor\@empty
+     \gdef\my@this@shortauthor{#1}%
+    \fi
+    \fi
+    \gdef\my@this@author{#2}}
+
+  \newcommand{\myinstitute}{\institute}
+
 }
 
 \DeclareOption{nopxfonts}{
