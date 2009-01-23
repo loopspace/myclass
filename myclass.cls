@@ -945,7 +945,7 @@
   \renewcommand{\mymaketitle}{%
     \mode<presentation>
     {
-      \begin{frame}
+      \begin{frame}[plain]
       \titlepage
       \end{frame}
     }
