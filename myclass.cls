@@ -611,7 +611,7 @@
   \renewcommand{\myaddress}{\address}
   \renewcommand{\myemail}{\email}
   \renewcommand{\myurl}{\urladdr}
-  \renewcommand{\mycurraddr}{\curraddr}
+  \renewcommand{\mycurraddr}{\@gobble}
   \renewcommand{\mythanks}{\thanks}
   \let\my@process@lastauthor\my@process@author
 }
@@ -745,15 +745,10 @@
 
 % Just deal with the bibliography for now.
 
-\DeclareOption{arxiv}{
-  \renewcommand{\mybibliographystyle}[1]{}
-  \renewcommand{\mybibliography}[1]{\input{\jobname.bbl}}
-}
-
 % To get the .bbl file to have the right info, we need to ensure that
 % we have a suitable bibtex style
 
-\DeclareOption{prearxiv}{
+\DeclareOption{arxiv}{
   \def\my@bib@style{halpha}
 }
 
@@ -866,6 +861,73 @@
     \setlength{\textheight}{7.5in}
   }
 
+}
+
+  % Homology, Homotopy, and Applications (intlpress)
+
+  % Seemed fairly straightforward, until a closer look at their code.
+  % Seems that '\address' is the signal for a new author so any author
+  % details coming after '\address' complain about not having an
+  % associated author.  So we have to make sure that we process
+  % '\address' just before the next author.  Fortunately, We Have The
+  % Technology (TM)
+
+\DeclareOption{hha}{
+  \def\my@real@class{hha}
+
+  \def\myand{, }
+  \def\mylastand{\andname\ }
+
+  \renewcommand{\mysubjclass}[2][]{\classification{#2}}
+  \renewcommand{\myurl}{\homepage}
+
+  \renewcommand{\myauthor}{%
+  \my@process@author%
+  \author}
+  \renewcommand{\myemail}{\email}
+  \renewcommand{\myurl}{\homepage}
+  \renewcommand{\mycurraddr}{\curraddr}
+  \renewcommand{\mythanks}{\thanks}
+
+  \renewcommand{\my@process@author}{%
+    \ifx\my@this@shortauthor\@empty
+    \else
+
+     \ifx\my@shortauthors\@empty
+     \else
+      \ge@addto@macro{\my@shortauthors}{\myand}
+     \fi
+    \ge@addto@macro{\my@shortauthors}{\my@this@shortauthor}
+
+    \let\my@this@shortauthor\@empty
+   \fi
+
+   \ifx\my@this@address\@empty
+   \else
+    {\def\\{,\space}%
+      \xdef\my@hha@this@address{\my@this@address}}
+    \expandafter\address\expandafter{\my@hha@this@address}
+    \let\my@this@address\@empty
+   \fi
+}
+
+  \renewcommand{\mymaketitle}{%
+    \ifx\my@abstract\@empty
+    \else
+    \begin{abstract}
+    \my@abstract
+    \end{abstract}
+    \fi
+
+    \maketitle}
+
+  \renewcommand{\my@process@lastauthor}{%
+    \let\myand\mylastand
+    \my@process@author
+    \ifx\my@shortauthors\@empty
+    \else
+     \expandafter\shortauthors\expandafter{\my@shortauthors}%
+    \fi}
 }
 
 % This doesn't do anything as yet - it's more as a default.
