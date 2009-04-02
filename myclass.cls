@@ -280,6 +280,14 @@
 \AtBeginDocument{\my@process@lastauthor}
 
 
+\DeclareOption{norsk}{
+  \my@request@package{inputenc}
+  \my@request@package{fontenc}
+
+  \PassOptionsToPackage{utf8}{inputenc}
+  \PassOptionsToPackage{utf8}{fontenc}
+}
+
 \DeclareOption{NTNUoving}{
 
   \def\my@real@class{NTNUoving}
@@ -874,6 +882,12 @@
 
 \DeclareOption{hha}{
   \def\my@real@class{hha}
+
+% Have to do this, otherwise amsthm is broken
+
+  \g@addto@macro{\my@real@options}{%
+    \RequirePackage{amsmath}
+  }
 
   \def\myand{, }
   \def\mylastand{\andname\ }
