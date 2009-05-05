@@ -1051,7 +1051,7 @@
 
   \if\be@mertypeis{handout}
    \PassOptionsToClass{handout}{beamer}
-   \def\be@merdefopts{12pt,xcolor=dvipsname,ignorenonframetext}
+   \def\be@merdefopts{12pt,xcolor=dvipsname,xcolor=gray,ignorenonframetext}
   \fi
 
   \if\be@mertypeis{trans}
