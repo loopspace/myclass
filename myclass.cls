@@ -293,7 +293,8 @@
 
   \PassOptionsToPackage{utf8}{inputenc}
   \PassOptionsToPackage{T1}{fontenc}
-  \PassOptionsToPackage{norsk}{babel}
+  \def\my@language{norsk}
+  \PassOptionsToPackage{\my@language}{babel}
 }
 
 \DeclareOption{NTNUoving}{
@@ -306,9 +307,17 @@
 
 %  \PassOptionsToPackage{utf8}{inputenc}
 %  \PassOptionsToPackage{T1}{fontenc}
-  \PassOptionsToPackage{english}{babel}
+  \def\my@language{english}
+  \PassOptionsToPackage{\my@language}{babel}
 }
 
+\DeclareOption{NTNUeksamen}{
+
+  \def\my@real@class{NTNUeksamen}
+  \PassOptionsToClass{12pt, a4paper}{NTNUeksamen}
+  \def\my@language{english}
+  \PassOptionsToPackage{\my@language}{babel}
+}
 
 \DeclareOption{lms}{
   \def\my@real@class{lms}
