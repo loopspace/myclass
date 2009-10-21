@@ -293,6 +293,7 @@
 
   \PassOptionsToPackage{utf8}{inputenc}
   \PassOptionsToPackage{T1}{fontenc}
+  \PassOptionsToPackage{bokmal}{exam}
   \def\my@language{norsk}
   \PassOptionsToPackage{\my@language}{babel}
 }
@@ -1026,7 +1027,7 @@
    \fi
   \fi
 
-  \edef\be@merdefopts{12pt,t,xcolor=dvipsname,ignorenonframetext}
+  \edef\be@merdefopts{12pt,t,xcolor=dvipsnames,ignorenonframetext}
 
 % There's a certain incompatibility between ignorenonframetext and
 % having a separate \mymaketitle macro.  The '\mymaketitle' doesn't
@@ -1068,12 +1069,12 @@
 
   \if\be@mertypeis{handout}
    \PassOptionsToClass{handout}{beamer}
-   \def\be@merdefopts{12pt,xcolor=dvipsname,xcolor=gray,ignorenonframetext}
+   \def\be@merdefopts{12pt,xcolor=dvipsnames,xcolor=gray,ignorenonframetext}
   \fi
 
   \if\be@mertypeis{trans}
    \PassOptionsToClass{trans}{beamer}
-   \def\be@merdefopts{12pt,xcolor=dvipsname,ignorenonframetext}
+   \def\be@merdefopts{12pt,xcolor=dvipsnames,ignorenonframetext}
   \fi
 
   \expandafter\g@addto@macro\expandafter{\expandafter\my@def@options\expandafter}\expandafter{\expandafter\PassOptionsToClass\expandafter{\expandafter\be@merdefopts\expandafter}\expandafter{\my@real@class}}
