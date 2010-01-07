@@ -298,6 +298,24 @@
   \PassOptionsToPackage{\my@language}{babel}
 }
 
+\DeclareOption{nynorsk}{
+  \my@request@package{fontenc}
+  \my@request@package{babel}
+
+% For some reason switching to uft8 input _here_ mucks up loading the
+% other packages
+
+  \g@addto@macro{\my@afterpackages}{%
+    \RequirePackage{inputenc}}
+
+
+  \PassOptionsToPackage{utf8}{inputenc}
+  \PassOptionsToPackage{T1}{fontenc}
+  \PassOptionsToPackage{nynorsk}{exam}
+  \def\my@language{nynorsk}
+  \PassOptionsToPackage{\my@language}{babel}
+}
+
 \DeclareOption{NTNUoving}{
 
   \def\my@real@class{NTNUoving}
