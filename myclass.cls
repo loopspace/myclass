@@ -980,6 +980,14 @@
     \fi}
 }
 
+% Theory and Applications of Categories
+
+\DeclareOption{tac}{
+  \def\my@real@class{tac}
+  \my@unrequest@package{pxfonts}
+  \my@unrequest@package{amsthm}
+}
+
 % This doesn't do anything as yet - it's more as a default.
 
 \DeclareOption{article}{
