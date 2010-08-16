@@ -626,8 +626,7 @@
     \maketitle}
 %
 % The amsart.cls defines their _internal_ shorttitle macro as
-% '\shorttitle' which is bad style (should have an @ symbol as it is
-% internal).  Also their redefined '\title' command clobbers
+% '\shorttitle'.  Also their redefined '\title' command clobbers
 % '\shortitle' if it isn't given a short title as an option.  To make
 % this system as robust as possible, we leave the shorttitle undefined
 % as long as possible.  If the amsart.cls file changes internally this
@@ -668,12 +667,11 @@
 
 %
 % Documenta Mathematica option.
-% Their style file is horrendous.  It isn't even a proper style file
-% as it is supposed to be clonked on top of the LaTeX source file.  So
-% I modified it ever-so-slightly to be a style file (commenting out a
-% few things).  However, that isn't the worst bit.  The worst bit is
+% This journal supplies a file that is supposed to be clonked on top
+% of the LaTeX source file.  So I modified it ever-so-slightly to be a
+% style file (commenting out a few things).  What makes this tricky is
 % that it uses '\obeylines' in setting up the title page.  That makes
-% it extremely tricky to write a macro to insert the values at the
+% it difficult to write a macro to insert the values at the
 % right points since juggling \obeylines is complicated.  Having found
 % a solution, I then found that this doesn't work from within a
 % '\DeclareOption' block - possibly the whole '\DeclareOption' would
@@ -787,6 +785,7 @@
   \let\mymaketitle\my@docmath@maketitle
 }
 
+% ArXiv option:
 % Just deal with the bibliography for now.
 
 % To get the .bbl file to have the right info, we need to ensure that
@@ -875,7 +874,7 @@
     }
 
 % jdg seems to follow amsart fairly consistently: it requires the
-% abstract to appear before the maketitle and mucks up the
+% abstract to appear before the maketitle and changes the
 % bibliography command removing the check to see if the aux file has
 % been opened
 
