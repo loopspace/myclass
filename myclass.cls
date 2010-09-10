@@ -135,11 +135,12 @@
 \newif\ifmyfig@res
 
 %
-% Load in the ifpdf.sty package to allow 'ifpdf'
+% Load in the ifpdf.sty and ifxetex.sty packages to allow 'ifpdf'
 % TODO: Perhaps check for existence and otherwise add in manually?
 %
 
 \RequirePackage{ifpdf}
+\RequirePackage{ifxetex}
 
 %
 % Set the real class according to options.
@@ -1136,9 +1137,14 @@
 
 \DeclareOption{fig}{
   \my@request@package{graphicx}
+  \ifxetex
   \ifpdf
     \PassOptionsToPackage{pdftex}{graphicx}
     \PassOptionsToPackage{pdftex,dvipsnames}{color}
+    \else
+  \PassOptionsToPackage{xetex}{graphicx}
+  \PassOptionsToPackage{xetex,dvipsnames}{color}
+    \fi
   \else
     \PassOptionsToPackage{dvips}{graphicx}
     \PassOptionsToPackage{dvips,dvipsnames}{color}
