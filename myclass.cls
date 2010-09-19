@@ -1103,6 +1103,13 @@
    \def\be@merdefopts{12pt,xcolor=dvipsnames,ignorenonframetext}
   \fi
 
+  \if\be@mertypeis{graphic}
+   \def\be@merdefopts{12pt,xcolor=dvipsnames,ignorenonframetext}
+   \g@addto@macro{\my@afterpackages}{%
+    \pgfrealjobname{\be@merfile.beamer.\be@merdate}
+  }
+  \fi
+
   \expandafter\g@addto@macro\expandafter{\expandafter\my@def@options\expandafter}\expandafter{\expandafter\PassOptionsToClass\expandafter{\expandafter\be@merdefopts\expandafter}\expandafter{\my@real@class}}
 
   \renewcommand{\myauthor}[2][]{%
