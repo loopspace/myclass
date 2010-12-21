@@ -113,14 +113,6 @@
 \newif\ifdraft
 
 %
-% What fonts are we using?  Hopf archive doesn't like non-cms fonts.
-% Default is to use pxfonts
-%
-
-\newif\ifpxfonts
-\pxfontstrue
-
-%
 % Useful to have a list of ``default'' packages that I almost always
 % load.  Load these last to allow for pxfonts and amsthm to be
 % selected according to the class.
@@ -986,6 +978,11 @@
   \def\my@real@class{tac}
   \my@unrequest@package{pxfonts}
   \my@unrequest@package{amsthm}
+% Hack to avoid complaints about paragraphs
+  \g@addto@macro{\my@afterclass}{
+    \def\paragraph{\@startsection{paragraph}{3}{\z@}{3.25ex plus1ex         minus.2ex}{-1em}{\reset@font \normalsize\bf}*}
+  }
+
 }
 
 % This doesn't do anything as yet - it's more as a default.
@@ -1181,9 +1178,10 @@
   \my@request@package{hyphenat}
 
   \g@addto@macro{\my@afterpackages}{%
-  \@ifpackageloaded{pxfonts}{}{
-    \RequirePackage{amssymb}
-    \providecommand{\coloneqq}{\colon=}
+    \@ifpackageloaded{pxfonts}{}{
+      \RequirePackage{amssymb}
+      \providecommand{\coloneqq}{\mathrel{\vcenter{\baselineskip0.5ex \lineskiplimit0pt \hbox{\scriptsize.}\hbox{\scriptsize.}}}=}
+      \providecommand{\Perp}{\amalg}
   }}
   \g@addto@macro{\my@real@options}{\my@def@options}
 }
