@@ -982,6 +982,8 @@
   \g@addto@macro{\my@afterclass}{
     \def\paragraph{\@startsection{paragraph}{3}{\z@}{3.25ex plus1ex         minus.2ex}{-1em}{\reset@font \normalsize\bf}*}
   }
+  % Plain bibliography style
+  \def\my@bib@style{plain}
 
 }
 
