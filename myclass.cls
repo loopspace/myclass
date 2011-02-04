@@ -976,6 +976,8 @@
 
 \DeclareOption{tac}{
   \def\my@real@class{tac}
+  \def\my@bib@style{halpha}
+
   \my@unrequest@package{pxfonts}
   \my@unrequest@package{amsthm}
 % Hack to avoid complaints about paragraphs
