@@ -982,7 +982,38 @@
   \my@unrequest@package{amsthm}
 % Hack to avoid complaints about paragraphs
   \g@addto@macro{\my@afterclass}{
-    \def\paragraph{\@startsection{paragraph}{3}{\z@}{3.25ex plus1ex         minus.2ex}{-1em}{\reset@font \normalsize\bf}*}
+\let\orig@xsect=\@xsect
+\def\par@xsect#1{%
+  \@tempskipa #1\relax
+  \ifdim \@tempskipa>\z@
+    \par \nobreak
+    \vskip \@tempskipa
+    \@afterheading
+  \else
+    \@nobreakfalse
+    \global\@noskipsectrue
+    \everypar{%
+      \if@noskipsec
+        \global\@noskipsecfalse
+       {\setbox\z@\lastbox}%
+        \clubpenalty\@M
+        \begingroup \@svsechd \endgroup
+        \unskip
+      \if@sectspace% <== ADDITION
+        \@tempskipa #1\relax
+        \hskip -\@tempskipa
+      \fi% <== ADDITION
+      \else
+        \clubpenalty \@clubpenalty
+        \everypar{}%
+      \fi}%
+  \fi
+  \let\@xsect=\orig@xsect
+  \ignorespaces}
+
+    \def\paragraph{\let\@xsect=\par@xsect
+      \@startsection{paragraph}{3}{\z@}{3.25ex  plus 1ex minus.2ex}{-1em}{\reset@font \normalsize\bf}*}
+
   }
   % Plain bibliography style
   \def\my@bib@style{plain}
