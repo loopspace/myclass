@@ -976,7 +976,7 @@
 
 \DeclareOption{tac}{
   \def\my@real@class{tac}
-  \def\my@bib@style{halpha}
+  \def\my@bib@style{hplain}
 
   \my@unrequest@package{pxfonts}
   \my@unrequest@package{amsthm}
