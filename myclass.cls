@@ -920,7 +920,13 @@
   \def\myand{, }
   \def\mylastand{\andname\ }
 
-  \renewcommand{\mysubjclass}[2][]{\classification{#2}}
+  \def\mysubjclass{\@ifnextchar[{\my@hha@mscps}{\my@hha@mscp}}
+    \def\my@hha@mscps[#1]#2{\classification{#2 (primary), #1 (secondary)}}
+    \def\my@hha@mscp#1{\classification{#1}}
+
+
+
+%  \renewcommand{\mysubjclass}[2][]{\classification{#2}}
   \renewcommand{\myurl}{\homepage}
 
   \renewcommand{\myauthor}{%
@@ -977,6 +983,8 @@
 \DeclareOption{tac}{
   \def\my@real@class{tac}
   \def\my@bib@style{hplain}
+
+  \renewcommand{\mysubjclass}[2][]{\subjclass{#2,#1}}
 
   \my@unrequest@package{pxfonts}
   \my@unrequest@package{amsthm}
