@@ -113,6 +113,12 @@
 \newif\ifdraft
 
 %
+% If we should use the TikZ external library
+%
+
+\newif\ifTikZexternal
+
+%
 % Useful to have a list of ``default'' packages that I almost always
 % load.  Load these last to allow for pxfonts and amsthm to be
 % selected according to the class.
@@ -784,9 +790,18 @@
 % To get the .bbl file to have the right info, we need to ensure that
 % we have a suitable bibtex style
 
+% Added tikz-external switch and an 'arxivgen' which is to be used to
+% generate all the necessary files.
+
 \DeclareOption{arxiv}{
   \def\my@bib@style{halpha}
+  \TikZexternaltrue
 }
+
+\DeclareOption{arxivgen}{
+  \def\my@bib@style{halpha}
+}
+
 
 % Commentarii Mathematici Helvetici; wants article.cls with prescribed
 % text width and height and address etc on title page.
@@ -1228,6 +1243,19 @@
   }}
   \g@addto@macro{\my@real@options}{\my@def@options}
 }
+
+%
+% Should ensure that the layout gets loaded here
+% Is this the best way to deal with this?
+%
+
+\DeclareOption{2up}{
+    \usepackage{pgfpages}
+
+    \pgfpagesuselayout{2 on 1 shifted}[border shrink=-3cm,vertical shift=.5cm]
+    \nofiles
+}
+
 
 \DeclareOption*{
   % Need to make sure that this isn't done until we're sure of what
