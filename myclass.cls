@@ -1256,6 +1256,89 @@
     \nofiles
 }
 
+%
+% Options for viewing on-screen
+%
+
+\DeclareOption{LargeScreen}{
+    \my@request@package{geometry}
+    \my@request@package{titling}
+    \PassOptionsToPackage{%
+        mag=1732,
+%        paperwidth=20truecm,
+%        paperheight=20truecm,
+%        height=.9\paperheight,
+%        width=19truecm,
+        hscale=.8,
+        vscale=.9,
+        includefoot,
+        foot=\baselineskip,
+        truedimen
+    }{geometry}
+    \PassOptionsToPackage{noshift}{mydraft}
+    \g@addto@macro{\my@afterclass}{%
+\parskip=.8\baselineskip \advance\parskip by 0pt plus .2\baselineskip\relax}
+    \g@addto@macro{\my@afterpackages}{%
+      \setlength{\droptitle}{-50pt}
+      \posttitle{\par\end{center}}
+    }
+}
+
+\DeclareOption{MacBookAir}{
+    \my@request@package{geometry}
+    \my@request@package{titling}
+    \PassOptionsToPackage{%
+        mag=1732,
+        paperwidth=20truecm,
+        paperheight=20truecm,
+        height=19truecm,
+        width=19truecm,
+        includefoot,
+        foot=\baselineskip,
+        truedimen
+    }{geometry}
+    \PassOptionsToPackage{noshift}{mydraft}
+    \g@addto@macro{\my@afterclass}{%
+\parskip=.8\baselineskip \advance\parskip by 0pt plus .2\baselineskip\relax}
+    \g@addto@macro{\my@afterpackages}{%
+      \setlength{\droptitle}{-50pt}
+      \posttitle{\par\end{center}}
+    }
+}
+
+\DeclareOption{GoodReader}{
+    \my@request@package{geometry}
+    \PassOptionsToPackage{%
+      paperwidth=10cm,
+      paperheight=13.33cm,
+      width=8cm,
+      height=12cm,
+      left=.5cm,
+      includefoot,
+      foot=\baselineskip,
+    }{geometry}
+    \PassOptionsToPackage{noshift}{mydraft}
+    \g@addto@macro{\my@afterclass}{%
+\parskip=.8\baselineskip \advance\parskip by 0pt plus .2\baselineskip\relax}
+}
+
+\DeclareOption{SmartPhone}{
+    \my@request@package{geometry}
+    \PassOptionsToPackage{%
+      paperwidth=6cm,
+      paperheight=8cm,
+      width=5.5cm,
+      height=7.5cm,
+      left=.25cm,
+      includefoot,
+      foot=\baselineskip,
+    }{geometry}
+    \PassOptionsToPackage{noshift}{mydraft}
+    \g@addto@macro{\my@afterclass}{%
+\parskip=.8\baselineskip \advance\parskip by 0pt plus .2\baselineskip\relax}
+}
+
+
 
 \DeclareOption*{
   % Need to make sure that this isn't done until we're sure of what
