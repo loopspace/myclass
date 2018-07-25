@@ -1048,6 +1048,10 @@
 \DeclareOption{article}{
 }
 
+\DeclareOption{report}{
+    \def\my@real@class{report}
+}
+
 \DeclareOption{hopf}{
   \my@unrequest@package{pxfonts}
 }
